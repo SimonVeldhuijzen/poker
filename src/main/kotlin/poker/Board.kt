@@ -3,6 +3,7 @@ package poker
 import kotlin.math.min
 
 enum class CardSuit { HEARTS, DIAMONDS, SPADES, CLUBS }
+// 2-10 -> 2-10, JQKA -> 11-14
 data class CardRank(val rank: Int)
 data class Card(val suit: CardSuit, val rank: CardRank)
 
