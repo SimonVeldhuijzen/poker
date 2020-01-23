@@ -9,13 +9,16 @@ import poker.Player
 import poker.PlayerAction
 import poker.Raise
 
-class HumanPlayer: AIPlayer {
+class TestingPlayer(commands: String): AIPlayer {
+
+    private val commands = commands.split(" ").toMutableList()
+
     override fun move(state: Board, player: Player): PlayerAction {
-        return when (val action = readLine()) {
+        return when (val command = commands.removeAt(0)) {
             "p" -> Check(player)
             "f" -> Fold(player)
             "c" -> Call(player, 0)
-            else -> Raise(player, action!!.toInt())
+            else -> Raise(player, command.toInt())
         }
     }
 }
