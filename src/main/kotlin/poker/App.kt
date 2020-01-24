@@ -3,7 +3,7 @@ package poker
 import poker.players.*
 
 fun main(args: Array<String>) {
-    val players = listOf(S("A"), S("B"), RandomPlayer("C"), Cheetos("D")).mapIndexed { i, ai ->
+    val players = listOf(S("A"), S("B"), RandomPlayer("C"), Cheetos("D", 0.5F)).mapIndexed { i, ai ->
         Player(i, ai.name, 10000, 0, 0, null, mutableListOf(), ai)
     }
 

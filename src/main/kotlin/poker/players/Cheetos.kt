@@ -44,8 +44,9 @@ class Cheetos(override var name: String, var acceptableRisk: Float) : AIPlayer {
             listOf<Float>(0F,0F,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0.83F,0.66F),
             listOf<Float>(0F,0F,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0.85F)
     )
-    
+
     override fun move(state: Board, player: Player): PlayerAction {
+        var livePlayers = state.activePlayers.size  + state.allInPlayers.size
         var winChance: Float
         if (state.communityCards.size == 0) {
             //starting hand
@@ -69,17 +70,17 @@ class Cheetos(override var name: String, var acceptableRisk: Float) : AIPlayer {
             val rankedHand = rankHand(handToRank)
             var winsOf: Float = (belowHands.get(rankedHand.handRank).toFloat()) / (totalHands.toFloat())
             println("$winsOf")
-            winChance = ((1 - winsOf.pow(state.activePlayers.size - 1)) + winChanceOld) / 2
+            winChance = ((1 - winsOf.pow(livePlayers - 1)) + winChanceOld) / 2
         }
 
-        var harm: Float = (player.betTotal.toFloat() + state.currentBet.toFloat()) / player.wealth.toFloat()
+        var harm: Float = (player.betTotal.toFloat() + state.currentBet.toFloat()) / (player.wealth.toFloat() / (livePlayers * 2) )
         var risk = winChance * harm
-        println("${player.cards[0].suit}:${player.cards[0].rank} + ${player.cards[1].suit}:${player.cards[1].rank}")
-        for (card in state.communityCards) {
-            print("${card.suit}:${card.rank} ")
-        }
-        println("")
-        println("${player.cards[0].suit}:${player.cards[0].rank} + ${player.cards[1].suit}:${player.cards[1].rank}")
+//        println("${player.cards[0].suit}:${player.cards[0].rank} + ${player.cards[1].suit}:${player.cards[1].rank}")
+//        for (card in state.communityCards) {
+//            print("${card.suit}:${card.rank} ")
+//        }
+//        println("")
+//        println("${player.cards[0].suit}:${player.cards[0].rank} + ${player.cards[1].suit}:${player.cards[1].rank}")
         println("Hmm: $winChance, $harm, $risk")
 
         if (risk <= acceptableRisk) {
