@@ -1,6 +1,7 @@
 package poker
 
 import poker.Board.Companion.copyPlayer
+import poker.players.RandomPlayer
 import kotlin.reflect.KClass
 
 interface AIPlayer {
@@ -8,21 +9,24 @@ interface AIPlayer {
     fun move(state: Board, player: Player): PlayerAction
 }
 
-data class Player(
+class Player(
     val id: Int,
     val name: String,
     var wealth: Int,
     var betTotal: Int,
     var betThisRound: Int,
     var lastAction: KClass<out PlayerAction>?,
-    val cards: MutableList<Card>,
-    val ai: AIPlayer
+    var cards: MutableList<Card>,
+    var ai: AIPlayer
 ) {
     val isBankrupt get() = wealth <= 0 && betThisRound <= 0 && betTotal <= 0
     val hasFolded get() = lastAction == Fold::class
     val isActive get() = !isBankrupt && !hasFolded
 
     fun move(board: Board) = ai.move(board, this)
+
+    fun copy() = Player(
+            id, name, wealth, betTotal, betThisRound, lastAction, mutableListOf(), RandomPlayer())
 }
 
 enum class CardSuit {
