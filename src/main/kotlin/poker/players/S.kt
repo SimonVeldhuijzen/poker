@@ -25,11 +25,9 @@ class S(override var name: String = "Simon") : AIPlayer {
     override fun move(state: Board, player: Player): PlayerAction {
         if (state.communityCards.size == 0) {
             return preflop(state, player)
-        } else if (state.communityCards.size == 3) {
-            return Call(player)
+        } else
+            return afterFlop(state, player)
         }
-
-        return Call(player)
     }
 
     fun preflop(state: Board, player: Player): PlayerAction {
