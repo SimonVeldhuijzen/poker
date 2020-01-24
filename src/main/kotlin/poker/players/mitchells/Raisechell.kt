@@ -9,6 +9,6 @@ class Raisechell: AIPlayer {
     override var name: String = "Raisechell"
 
     override fun move(state: Board, player: Player): PlayerAction {
-        return Raise(player, Random.nextInt(1, player.wealth))
+        return Raise(player, Random.nextInt(state.minBet, player.wealth))
     }
 }

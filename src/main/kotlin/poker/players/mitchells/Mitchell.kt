@@ -13,8 +13,8 @@ class Mitchell: AIPlayer {
 
         val playerAction: PlayerAction
         when (pokerhand) {
-            is HighCard -> playerAction = Check(player)
-            is Pair -> playerAction = Check(player)
+            is HighCard -> playerAction = if (state.communityCards.size == 0) Call(player) else Check(player)
+            is Pair -> playerAction = if (state.communityCards.size == 0) Call(player) else Check(player)
             is TwoPair -> playerAction = MitCall().move(state, player)
             is ThreeOfAKind -> playerAction = Raisechell().move(state, player)
             is Straight -> playerAction = Raisechell().move(state, player)

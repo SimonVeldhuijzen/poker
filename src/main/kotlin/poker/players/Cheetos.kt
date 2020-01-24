@@ -82,7 +82,7 @@ class Cheetos(override var name: String = "Cheetos", var acceptableRisk: Float) 
 //        }
 //        println("")
 //        println("${player.cards[0].suit}:${player.cards[0].rank} + ${player.cards[1].suit}:${player.cards[1].rank}")
-        println("Hmm: $winChance, $harm, $risk")
+//        println("Hmm: $winChance, $harm, $risk")
 
         if (risk <= acceptableRisk) {
             return Call(player)
