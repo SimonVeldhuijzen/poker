@@ -6,7 +6,7 @@ import poker.Check
 import poker.Player
 import poker.PlayerAction
 
-class S: AIPlayer {
+class S(override var name: String) : AIPlayer {
 
     override var name = "Simon"
 
