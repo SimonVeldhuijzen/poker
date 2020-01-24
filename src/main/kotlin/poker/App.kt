@@ -15,7 +15,7 @@ fun main(args: Array<String>) {
         Player(i, ai.name, 10000, 0, 0, null, mutableListOf(), ai)
     }
 
-    val board = Board(players)
+    val board = Board(players.toMutableList())
     board.playGame()
 
     for (player in players) {

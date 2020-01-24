@@ -4,7 +4,7 @@ import poker.players.HumanPlayer
 import kotlin.math.max
 import kotlin.math.min
 
-class Board(val players: List<Player>, val minBet: Int = 100) {
+class Board(val players: MutableList<Player>, val minBet: Int = 100) {
 
     val actions = mutableListOf<TurnAction>()
     val deck = mutableListOf<Card>()
@@ -32,6 +32,12 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         println()
         println("new round")
         initializeRound()
+
+        for (player in players) {
+            println("${player.name}: ${player.wealth}")
+        }
+
+        readLine()
 
         while (!isFinished) {
             if (needsActionFromPlayer()) {
@@ -332,6 +338,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         allInPlayers.clear()
         bankruptPlayers.clear()
         bankruptPlayers.addAll(players.filter { it.wealth <= 0 })
+        players.removeAll(bankruptPlayers)
 
         communityCards.clear()
         deck.clear()
@@ -366,7 +373,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
     }
 
     private fun copyBoard(): Board {
-        return Board(players.map { copyPlayer(it, it == currentPlayer) }, minBet).also {
+        return Board(players.map { copyPlayer(it, it == currentPlayer) }.toMutableList(), minBet).also {
             it.actions.clear()
             it.actions.addAll(actions.map { a -> a.copy() })
             it.deck.clear()
