@@ -36,7 +36,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
                 val player = copyPlayer(currentPlayer, true)
                 val board = copyBoard()
 
-                println("Player to move: ${player.id} (wealth: ${player.wealth}; betted this round: ${player.betThisRound}; betted this hand: ${player.betTotal}")
+                println("Player to move: ${player.name} (wealth: ${player.wealth}; betted this round: ${player.betThisRound}; betted this hand: ${player.betTotal}")
 
                 val move = try {
                     player.move(board)
