@@ -262,6 +262,12 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
             communityCards.add(river.fifth)
         } else {
             println("Showdown")
+            val playerIterator = players.iterator()
+            while (playerIterator.hasNext()) {
+                val value = playerIterator.next()
+                println(value.name + " has a " + rankHand(value.cards + communityCards))
+            }
+            println()
             return handleShowdown()
         }
 
