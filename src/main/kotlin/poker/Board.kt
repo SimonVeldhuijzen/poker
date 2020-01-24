@@ -1,8 +1,6 @@
 package poker
 
-import org.jetbrains.kotlin.psi.valueArgumentListVisitor
 import poker.players.HumanPlayer
-import kotlin.contracts.CallsInPlace
 import kotlin.math.max
 import kotlin.math.min
 
@@ -132,7 +130,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
             currentPlayer.wealth -= toCall
             currentPlayer.betThisRound += toCall
             println("Call of $toCall by ${currentPlayer.id}")
-            return Call(currentPlayer, toCall)
+            return Call(currentPlayer)
         }
     }
 
