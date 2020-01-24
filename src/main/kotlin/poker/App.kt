@@ -1,30 +1,23 @@
 package poker
 
 import poker.players.*
+import poker.players.mitchells.Mitchell
 
 fun main(args: Array<String>) {
-    val players = listOf(S("A"), S("B"), RandomPlayer("C"), RandomPlayer("D")).mapIndexed { i, ai ->
+    val players = listOf(
+            S(),
+            S2(),
+            Mitchell(),
+            alsucfnhaiegsdruifjklgjdkljhjhgfdsdhjkjhgfdryuiyrwqyuikdsjkdmnbvcxvbnmfdgjkjretyutrewhjmnxvbnmnbcdfghjkjgweyuiutrewrj(),
+            Cheetos(acceptableRisk = 0.5f),
+            BarryDePokerTovenaar(),
+            SirRaiseALot("SirRaiseALot", 1),
+            PokermonMaster()
+    ).mapIndexed { i, ai ->
         Player(i, ai.name, 10000, 0, 0, null, mutableListOf(), ai)
     }
 
-//    try {
-//        board.playGame()
-//    } catch (_: Exception) {
-//        try {
-//            board.playGame()
-//        } catch (_: Exception) {
-//            try {
-//                board.playGame()
-//            } catch (_: Exception) {
-//                try {
-//                    board.playGame()
-//                } catch (_: Exception) {
-//
-//                }
-//            }
-//        }
-//    }
-    val board = Board(players)
+    val board = Board(players.toMutableList())
     board.playGame()
 
     for (player in players) {
