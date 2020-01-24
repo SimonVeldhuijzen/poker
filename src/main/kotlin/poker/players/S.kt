@@ -11,6 +11,6 @@ import poker.PlayerAction
 class S(override var name: String = "Simon") : AIPlayer {
 
     override fun move(state: Board, player: Player): PlayerAction {
-        return Call(player, 0)
+        return Call(player)
     }
 }
