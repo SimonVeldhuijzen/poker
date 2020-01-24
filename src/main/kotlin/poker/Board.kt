@@ -17,12 +17,18 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
     var isFinished = false
     var checks = players.size
 
+    override fun toString() = "Community cards: $communityCards; currentBet: $currentBet"
+
     fun playRound() {
         initializeRound()
 
         while (!isFinished) {
             val player = copyPlayer(currentPlayer, true)
             val board = copyBoard()
+
+            println("Player to play: $player")
+            println("Board: $board")
+
 
             val move = try {
                 player.move(board)
@@ -150,16 +156,21 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         checks = players.count { it.isActive && it.wealth > 0 }
 
         when {
-            actions.filterIsInstance<River>().any() -> handleShowdown()
+            actions.filterIsInstance<River>().any() -> {
+                println("Showdown")
+                handleShowdown()
+            }
             actions.filterIsInstance<Turn>().any() -> {
                 val river = River(deck.removeAt(0))
                 actions.add(river)
                 communityCards.add(river.fifth)
+                println("River")
             }
             actions.filterIsInstance<Flop>().any() -> {
                 val turn = Turn(deck.removeAt(0))
                 actions.add(turn)
                 communityCards.add(turn.fourth)
+                println("Turn")
             }
             else -> {
                 val flop = Flop(deck.removeAt(0), deck.removeAt(0), deck.removeAt(0))
@@ -167,6 +178,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
                 communityCards.add(flop.first)
                 communityCards.add(flop.second)
                 communityCards.add(flop.third)
+                println("Flop")
             }
         }
     }
