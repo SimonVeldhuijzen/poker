@@ -5,12 +5,14 @@ import poker.players.mitchells.Mitchell
 
 fun main(args: Array<String>) {
     val players = listOf(
-        S(),
-        Mitchell(),
-        alsucfnhaiegsdruifjklgjdkljhjhgfdsdhjkjhgfdryuiyrwqyuikdsjkdmnbvcxvbnmfdgjkjretyutrewhjmnxvbnmnbcdfghjkjgweyuiutrewrj(),
-        Cheetos(acceptableRisk =  0.5f),
-        BarryDePokerTovenaar(),
-        SirRaiseALot("SirRaiseALot", 1)
+            S(),
+            S2(),
+            Mitchell(),
+            alsucfnhaiegsdruifjklgjdkljhjhgfdsdhjkjhgfdryuiyrwqyuikdsjkdmnbvcxvbnmfdgjkjretyutrewhjmnxvbnmnbcdfghjkjgweyuiutrewrj(),
+            Cheetos(acceptableRisk = 0.5f),
+            BarryDePokerTovenaar(),
+            SirRaiseALot("SirRaiseALot", 1),
+            PokermonMaster()
     ).mapIndexed { i, ai ->
         Player(i, ai.name, 10000, 0, 0, null, mutableListOf(), ai)
     }
