@@ -4,11 +4,13 @@ import poker.Board.Companion.copyPlayer
 import kotlin.reflect.KClass
 
 interface AIPlayer {
+    var name: String
     fun move(state: Board, player: Player): PlayerAction
 }
 
 data class Player(
     val id: Int,
+    val name: String,
     var wealth: Int,
     var betTotal: Int,
     var betThisRound: Int,

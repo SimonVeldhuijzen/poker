@@ -10,7 +10,7 @@ import poker.PlayerAction
 import poker.Raise
 
 class TestingPlayer(commands: String): AIPlayer {
-
+    override var name = "TestingPlayer"
     private val commands = commands.split(" ").toMutableList()
 
     override fun move(state: Board, player: Player): PlayerAction {

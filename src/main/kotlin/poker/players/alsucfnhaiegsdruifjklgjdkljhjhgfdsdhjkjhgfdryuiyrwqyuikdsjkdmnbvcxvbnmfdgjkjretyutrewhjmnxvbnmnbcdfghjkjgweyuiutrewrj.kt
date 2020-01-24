@@ -5,6 +5,7 @@ import kotlin.math.pow
 import kotlin.math.sign
 
 class alsucfnhaiegsdruifjklgjdkljhjhgfdsdhjkjhgfdryuiyrwqyuikdsjkdmnbvcxvbnmfdgjkjretyutrewhjmnxvbnmnbcdfghjkjgweyuiutrewrj : AIPlayer {
+    override var name: String = "<(''<)"
     override fun move(state: Board, player: Player): PlayerAction {
         val myBet = player.betThisRound
         val requiredBet = state.currentBet
