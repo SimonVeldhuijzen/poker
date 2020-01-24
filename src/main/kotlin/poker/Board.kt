@@ -394,15 +394,15 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
     companion object {
         fun copyPlayer(player: Player, showCardsAndAi: Boolean): Player {
             return if (showCardsAndAi) {
-                player.copy(
-                    cards = player.cards.map { it.copy() }.toMutableList(),
-                    ai = player.ai
-                )
+                player.copy().also {
+                    it.cards = player.cards.map { it.copy() }.toMutableList()
+                    it.ai = player.ai
+                }
             } else {
-                player.copy(
-                    cards = mutableListOf(),
-                    ai = HumanPlayer()
-                )
+                player.copy().also {
+                    it.cards = mutableListOf()
+                    it.ai = HumanPlayer()
+                }
             }
         }
     }
