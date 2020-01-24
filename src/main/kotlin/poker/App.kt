@@ -8,7 +8,7 @@ fun main(args: Array<String>) {
         S(),
         Mitchell(),
         alsucfnhaiegsdruifjklgjdkljhjhgfdsdhjkjhgfdryuiyrwqyuikdsjkdmnbvcxvbnmfdgjkjretyutrewhjmnxvbnmnbcdfghjkjgweyuiutrewrj(),
-        Cheetos("Joeri"),
+        Cheetos("Joeri", 0.5f),
         BarryDePokerTovenaar(),
         SirRaiseALot("SirRaiseALot")
     ).mapIndexed { i, ai ->

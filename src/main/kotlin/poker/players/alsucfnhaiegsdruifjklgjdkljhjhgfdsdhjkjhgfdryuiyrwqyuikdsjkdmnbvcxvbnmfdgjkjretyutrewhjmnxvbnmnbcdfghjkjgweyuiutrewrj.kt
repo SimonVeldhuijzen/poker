@@ -20,7 +20,7 @@ class alsucfnhaiegsdruifjklgjdkljhjhgfdsdhjkjhgfdryuiyrwqyuikdsjkdmnbvcxvbnmfdgj
         val start = System.currentTimeMillis()
         var total = 0
         var wins = 0.0
-        while (System.currentTimeMillis() - start < 950) {
+        while (System.currentTimeMillis() - start < 950 && total < 1000) {
             deckCards.shuffle()
             var lolRandom = deckCards.take(5 - communityCards.size + 2 * pCount)
             val coms = communityCards + lolRandom.take(5 - communityCards.size)

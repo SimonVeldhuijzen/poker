@@ -33,12 +33,6 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         println("new round")
         initializeRound()
 
-        for (player in players) {
-            println("Player ${player.name} has wealth ${player.wealth}")
-        }
-
-        readLine()
-
         while (!isFinished) {
             if (needsActionFromPlayer()) {
                 val player = copyPlayer(currentPlayer, true)
@@ -133,7 +127,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
             println("Check by ${currentPlayer.name}")
             return Check(currentPlayer)
         } else {
-            error("wtf")
+            return fold()
         }
     }
 
@@ -168,7 +162,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         if (currentPlayer.wealth <= amount) {
             return allIn()
         } else if (amount < minBet) {
-            error("wtf")
+            return fold()
         } else {
             currentPlayer.wealth -= amount
             currentPlayer.betThisRound += amount
@@ -312,10 +306,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
                     money
                 }
                 val moneyPerGuy = moneySum / winners.size
-                winners.forEach {
-                    print("Winning: ${it.name}")
-                    it.wealth += moneyPerGuy
-                }
+                winners.forEach { it.wealth += moneyPerGuy }
                 winners[0].wealth += moneySum - moneyPerGuy * winners.size
             }
             playersInShowDown.removeAll(removeFromShowdown)
