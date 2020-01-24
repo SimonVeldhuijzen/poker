@@ -74,7 +74,7 @@ class Cheetos(override var name: String) : AIPlayer {
         println("Hmm: $winChance, $harm, $risk")
 
         if (risk <= acceptableRisk) {
-            return Call(player, 0)
+            return Call(player)
         } else {
             return Check(player)
         }
