@@ -25,11 +25,9 @@ class S(override var name: String = "Simon") : AIPlayer {
     override fun move(state: Board, player: Player): PlayerAction {
         if (state.communityCards.size == 0) {
             return preflop(state, player)
-        } else if (state.communityCards.size == 3) {
-            return Call(player)
+        } else {
+            return afterFlop(state, player)
         }
-
-        return Call(player)
     }
 
     fun preflop(state: Board, player: Player): PlayerAction {
@@ -49,9 +47,9 @@ class S(override var name: String = "Simon") : AIPlayer {
         }
 
         val risk = betDeltaPercentage / handScore
-        if (risk > 100) {
+        if (risk > 200) {
             return Check(player)
-        } else if (risk > 50) {
+        } else if (risk > 100) {
             return Call(player)
         } else {
             return Raise(player, (player.wealth - betDelta) / risk.toInt())
