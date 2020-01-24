@@ -12,6 +12,6 @@ fun main(args: Array<String>) {
     board.playGame()
 
     for (player in players) {
-        println("Player ${player.id} has wealth ${player.wealth}")
+        println("Player ${player.name} has wealth ${player.wealth}")
     }
 }
