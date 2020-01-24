@@ -8,14 +8,17 @@ class Mitchell: AIPlayer {
     override var name: String = "Mitchell"
 
     override fun move(state: Board, player: Player): PlayerAction {
-
-
         val listOfPlayers = listOf(MitCall(), MitchAllIn(), Mitcheck(), MitchFold(), Raisechell())
         val listOfCards = player.cards + state.communityCards
+        val pokerhand = rankHand(listOfCards)
 
-        val pokerhand = rankHand(player.cards + state.communityCards)
-
+        val playerAction: PlayerAction
         println("type $pokerhand.")
-        return listOfPlayers.random().move(state, player)
+        if (pokerhand is HighCard) {
+            playerAction = Check(player)
+        } else {
+            playerAction = listOfPlayers.random().move(state, player)
+        }
+        return playerAction
     }
 }
