@@ -90,7 +90,6 @@ class BarryDePokerTovenaar: AIPlayer {
     }
 
     //check board state
-
-
-    //
+    //check own bet
+    //check other bets
 }
