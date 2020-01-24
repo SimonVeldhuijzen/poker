@@ -309,6 +309,11 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         deck.clear()
         deck.addAll(CardSuit.values().flatMap { suit -> (2..14).map { rank -> Card(suit, CardRank(rank)) } })
         deck.shuffle()
+
+        if (!isValid()) {
+            println()
+        }
+
         players.forEach {
             it.cards.clear()
             it.cards.add(deck.removeAt(0))
