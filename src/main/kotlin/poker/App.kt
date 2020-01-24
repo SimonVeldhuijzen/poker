@@ -1,9 +1,10 @@
 package poker
 
 import poker.players.HumanPlayer
+import poker.players.RandomPlayer
 
 fun main(args: Array<String>) {
-    val players = listOf(HumanPlayer(), HumanPlayer(), HumanPlayer(), HumanPlayer()).mapIndexed { i, ai ->
+    val players = listOf(RandomPlayer(), RandomPlayer(), RandomPlayer(), RandomPlayer()).mapIndexed { i, ai ->
         Player(i, 10000, 0, 0, null, mutableListOf(), ai)
     }
 
