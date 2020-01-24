@@ -10,5 +10,5 @@ fun main(args: Array<String>) {
     }
 
     val board = Board(players)
-    board.playRound()
+    board.playGame()
 }
