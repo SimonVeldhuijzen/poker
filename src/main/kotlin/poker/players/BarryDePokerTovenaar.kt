@@ -8,7 +8,13 @@ import poker.*
 class BarryDePokerTovenaar: AIPlayer {
 
     override fun move(state: Board, player: Player): PlayerAction {
-        val action = checkHandBeforeFlop(player)
+        var action: String = ""
+        when(state.communityCards.size){
+            0 -> action = checkHandBeforeFlop(player)
+            3 -> action = checkHandAfterFlop(player)
+            4 -> action = checkHandAfterTurn(player)
+            else -> action = checkHandAfterRiver(player)
+        }
         println("actie: $action")
         if (action == "check") {
             return Check(player)
@@ -16,9 +22,11 @@ class BarryDePokerTovenaar: AIPlayer {
             return AllIn(player, 10000000)
         } else if (action == "call")  {
             return Call(player, 10)
-        }else if (action == "raise")  {
+        } else if (action == "raise")  {
             return Raise(player, state.currentBet * 2)
-        }else {
+        } else if (action == "fold")  {
+            return Fold(player)
+        } else{
             return Fold(player)
         }
     }
@@ -27,14 +35,56 @@ class BarryDePokerTovenaar: AIPlayer {
     //check hand
     fun checkHandBeforeFlop(player: Player): String {
         val pokerHand = rankHand(player.cards)
-        println("Pokerhand: $pokerHand")
+        println("Pokerhand: ${pokerHand::class.simpleName}")
         when(pokerHand) {
             is Pair -> return "raise"
-            is HighCard -> return "allin"
+            is HighCard -> return "call"
             is ThreeOfAKind -> return "raise"
             is Flush -> return "raise"
-            is FourOfAKind -> return ""
-            is StraightFlush -> return ""
+            is FourOfAKind -> return "allin"
+            is StraightFlush -> return "allin"
+            else -> return "fold"
+        }
+    }
+
+    fun checkHandAfterFlop(player: Player): String {
+        val pokerHand = rankHand(player.cards)
+        println("Pokerhand: ${pokerHand::class.simpleName}")
+        when(pokerHand) {
+            is Pair -> return "raise"
+            is HighCard -> return "fold"
+            is ThreeOfAKind -> return "raise"
+            is Flush -> return "raise"
+            is FourOfAKind -> return "allin"
+            is StraightFlush -> return "allin"
+            else -> return "fold"
+        }
+    }
+
+    fun checkHandAfterTurn(player: Player): String {
+        val pokerHand = rankHand(player.cards)
+        println("Pokerhand: ${pokerHand::class.simpleName}")
+        when(pokerHand) {
+            is Pair -> return "raise"
+            is HighCard -> return "fold"
+            is ThreeOfAKind -> return "raise"
+            is Flush -> return "raise"
+            is FourOfAKind -> return "allin"
+            is StraightFlush -> return "allin"
+            else -> return "fold"
+        }
+    }
+
+    fun checkHandAfterRiver(player: Player): String {
+        val pokerHand = rankHand(player.cards)
+        println("Pokerhand: ${pokerHand::class.simpleName}")
+        when(pokerHand) {
+            is Pair -> return "fold"
+            is HighCard -> return "fold"
+            is ThreeOfAKind -> return "raise"
+            is Flush -> return "allin"
+            is FourOfAKind -> return "allin"
+            is StraightFlush -> return "allin"
             else -> return "fold"
         }
     }

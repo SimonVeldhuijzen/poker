@@ -184,13 +184,13 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
                 val river = River(deck.removeAt(0))
                 actions.add(river)
                 communityCards.add(river.fifth)
-                println("River")
+                println("River: ${river.fifth}")
             }
             actions.filterIsInstance<Flop>().any() -> {
                 val turn = Turn(deck.removeAt(0))
                 actions.add(turn)
                 communityCards.add(turn.fourth)
-                println("Turn")
+                println("Turn: ${turn.fourth}")
             }
             else -> {
                 val flop = Flop(deck.removeAt(0), deck.removeAt(0), deck.removeAt(0))
@@ -198,7 +198,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
                 communityCards.add(flop.first)
                 communityCards.add(flop.second)
                 communityCards.add(flop.third)
-                println("Flop")
+                println("Flop: ${flop.first}, ${flop.second}, ${flop.third}")
             }
         }
     }
