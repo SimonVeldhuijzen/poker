@@ -40,7 +40,7 @@ class alsucfnhaiegsdruifjklgjdkljhjhgfdsdhjkjhgfdryuiyrwqyuikdsjkdmnbvcxvbnmfdgj
 
         val rBound = dikkePot*pWin/pLose
         return when {
-            rBound - toCall >= state.minBet && pWin > 0.8 -> Raise(player, (rBound - toCall).toInt())
+            rBound - toCall >= state.minBet -> Raise(player, (rBound - toCall).toInt())
             toCall == 0 -> Check(player)
             rBound >= toCall -> Call(player)
             else -> Fold(player)
