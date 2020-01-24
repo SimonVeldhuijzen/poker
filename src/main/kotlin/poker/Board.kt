@@ -132,6 +132,11 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
             currentPlayer.wealth -= toCall
             currentPlayer.betThisRound += toCall
             println("Call of $toCall by ${currentPlayer.id}")
+
+            if (!isValid()) {
+                println()
+            }
+
             return Call(currentPlayer, toCall)
         }
     }
@@ -146,6 +151,11 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
             currentPlayer.betThisRound += amount
             currentBet += amount
             println("Raise of $amount by ${currentPlayer.id}")
+
+            if (!isValid()) {
+                println()
+            }
+
             return Raise(currentPlayer, amount)
         }
     }
@@ -163,6 +173,10 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         currentPlayer.wealth = 0
         activePlayers.remove(currentPlayer)
         allInPlayers.add(currentPlayer)
+
+        if (!isValid()) {
+            println()
+        }
 
         return AllIn(currentPlayer, adding)
     }
@@ -202,25 +216,45 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         }
 
         winner.wealth += players.map { it.betTotal }.sum()
+        if (!isValid()) {
+            println()
+        }
         isFinished = true
     }
 
     private fun goToNextPhase() {
         if (communityCards.size == 0) {
             println("Flop")
-            actions.add(Flop(deck.removeAt(0), deck.removeAt(0), deck.removeAt(0)))
+            val flop = Flop(deck.removeAt(0), deck.removeAt(0), deck.removeAt(0))
+            actions.add(flop)
+            communityCards.add(flop.first)
+            communityCards.add(flop.second)
+            communityCards.add(flop.third)
         } else if (communityCards.size == 3) {
             println("Turn")
-            actions.add(Turn(deck.removeAt(0)))
+            val turn = Turn(deck.removeAt(0))
+            actions.add(turn)
+            communityCards.add(turn.fourth)
         } else if (communityCards.size == 4) {
             println("River")
-            actions.add(River(deck.removeAt(0)))
+            val river = River(deck.removeAt(0))
+            actions.add(river)
+            communityCards.add(river.fifth)
         } else {
             println("Showdown")
             return handleShowdown()
         }
 
+        println("resetting bet")
         currentBet = 0
+        players.forEach {
+            it.betTotal += it.betThisRound
+            it.betThisRound = 0
+            it.lastAction = null
+        }
+        if (!isValid()) {
+            println()
+        }
     }
 
     private fun handleShowdown() {
@@ -252,12 +286,16 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         }
 
         actions.add(Showdown())
+        if (!isValid()) {
+            println()
+        }
         isFinished = true
     }
 
     private fun initializeRound() {
         actions.clear()
         isFinished = false
+        println("resetting bet")
         currentBet = 0
 
         activePlayers.clear()
@@ -282,6 +320,10 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         }
 
         dealer = nextPlayer(dealer)
+
+        if (!isValid()) {
+            println()
+        }
 
         currentPlayer = nextPlayer(dealer)
         handlePlayerInput(SmallBlind(currentPlayer, minBet / 2))
@@ -317,6 +359,10 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
             it.allInPlayers.addAll(allInPlayers.map { p ->  copyPlayer(p, p == currentPlayer) })
             it.bankruptPlayers.addAll(bankruptPlayers.map { p ->  copyPlayer(p, p == currentPlayer) })
         }
+    }
+
+    private fun isValid(): Boolean {
+        return players.sumBy { it.wealth + it.betTotal + it.betThisRound } == 40000
     }
 
     companion object {
