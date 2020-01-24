@@ -20,7 +20,7 @@ class alsucfnhaiegsdruifjklgjdkljhjhgfdsdhjkjhgfdryuiyrwqyuikdsjkdmnbvcxvbnmfdgj
         val start = System.currentTimeMillis()
         var total = 0
         var wins = 0.0
-        while (System.currentTimeMillis() - start < 950 && total < 1000) {
+        while (System.currentTimeMillis() - start < 950 && total < 10000) {
             deckCards.shuffle()
             var lolRandom = deckCards.take(5 - communityCards.size + 2 * pCount)
             val coms = communityCards + lolRandom.take(5 - communityCards.size)
@@ -40,7 +40,7 @@ class alsucfnhaiegsdruifjklgjdkljhjhgfdsdhjkjhgfdryuiyrwqyuikdsjkdmnbvcxvbnmfdgj
 
         val rBound = dikkePot*pWin/pLose
         return when {
-            rBound - toCall >= state.minBet && pWin > 0.8 -> Raise(player, (rBound - toCall).toInt())
+            rBound - toCall >= state.minBet -> Raise(player, (rBound - toCall).toInt())
             toCall == 0 -> Check(player)
             rBound >= toCall -> Call(player)
             else -> Fold(player)
