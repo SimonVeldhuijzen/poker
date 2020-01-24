@@ -1,8 +1,6 @@
 package poker
 
-import org.jetbrains.kotlin.psi.valueArgumentListVisitor
 import poker.players.HumanPlayer
-import kotlin.contracts.CallsInPlace
 import kotlin.math.max
 import kotlin.math.min
 
@@ -156,7 +154,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
                 println()
             }
 
-            return Call(currentPlayer, toCall)
+            return Call(currentPlayer)
         }
     }
 
@@ -292,23 +290,28 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         }
         val results = applyShowDown(this).toMap()
 
-        val amounts = results.map { it.key.betTotal }.distinct().sorted() - listOf(0)
-        var previous = 0
-        for (amount in amounts) {
-            val actualAmount = amount - previous
-            val playersWithHands = results.filter { it.key.betTotal != 0 && it.key !in foldedPlayers }
-            val highest = playersWithHands.maxBy { it.value }
-            val winners = playersWithHands.filter { it.value.compareTo(highest!!.value) == 0 }
-            val pot = actualAmount * playersWithHands.size / winners.size
-            winners.forEach {
-                it.key.wealth += pot
-            }
+        val playersInShowDown = (players - foldedPlayers).sortedByDescending { results[it] }.toMutableList()
 
-            playersWithHands.forEach {
-                it.key.betTotal -= actualAmount
+        while(playersInShowDown.isNotEmpty()) {
+            val bestHand = results[playersInShowDown[0]]!!
+            val winners = playersInShowDown.filter { results[it]!!.compareTo(bestHand) == 0 }.sortedBy { it.betTotal }
+            val lowestBet = winners[0]!!.betTotal
+            val removeFromShowdown = winners.filter { it.betTotal == lowestBet }
+            if (lowestBet > 0) {
+                val moneySum = players.sumBy {
+                    val money = min(it.betTotal, lowestBet)
+                    it.betTotal -= money
+                    money
+                }
+                val moneyPerGuy = moneySum / winners.size
+                winners.forEach { it.wealth += moneyPerGuy }
+                winners[0].wealth += moneySum - moneyPerGuy * winners.size
             }
+            playersInShowDown.removeAll(removeFromShowdown)
+        }
 
-            previous = amount
+        if (players.any { it.betThisRound > 0 }) {
+            error("Unreachable")
         }
 
         actions.add(Showdown())

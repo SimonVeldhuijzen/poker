@@ -56,7 +56,7 @@ sealed class BoardAction: TurnAction()
 
 class Check(override val player: Player): PlayerAction() { override fun copy() = Check(copyPlayer(player, false)) }
 class Fold(override val player: Player): PlayerAction() { override fun copy() = Fold(copyPlayer(player, false)) }
-class Call(override val player: Player, val amount: Int): PlayerAction() { override fun copy() = Call(copyPlayer(player, false), amount) }
+class Call(override val player: Player): PlayerAction() { override fun copy() = Call(copyPlayer(player, false)) }
 class Raise(override val player: Player, val amount: Int): PlayerAction() { override fun copy() = Raise(copyPlayer(player, false), amount) }
 class AllIn(override val player: Player, val amount: Int): PlayerAction() { override fun copy() = AllIn(copyPlayer(player, false), amount) }
 class SmallBlind(override val player: Player, val amount: Int): PlayerAction() { override fun copy() = SmallBlind(copyPlayer(player, false), amount) }

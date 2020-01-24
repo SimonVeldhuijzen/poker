@@ -26,10 +26,10 @@ class S(override var name: String = "Simon") : AIPlayer {
         if (state.communityCards.size == 0) {
             return preflop(state, player)
         } else if (state.communityCards.size == 3) {
-            return Call(player, 0)
+            return Call(player)
         }
 
-        return Call(player, 0)
+        return Call(player)
     }
 
     fun preflop(state: Board, player: Player): PlayerAction {
@@ -52,7 +52,7 @@ class S(override var name: String = "Simon") : AIPlayer {
         if (risk > 100) {
             return Check(player)
         } else if (risk > 50) {
-            return Call(player, 0)
+            return Call(player)
         } else {
             return Raise(player, (player.wealth - betDelta) / risk.toInt())
         }
@@ -62,8 +62,8 @@ class S(override var name: String = "Simon") : AIPlayer {
         return when (rankHand(player.cards)) {
             is HighCard -> Check(player)
             is Pair -> Check(player)
-            is TwoPair -> if (state.currentBet - player.betThisRound < player.wealth / 15) Call(player, max(state.minBet, 0)) else Check(player)
-            is ThreeOfAKind -> if (state.currentBet - player.betThisRound < player.wealth / 10) Call(player, max(state.minBet, 0)) else Check(player)
+            is TwoPair -> if (state.currentBet - player.betThisRound < player.wealth / 15) Call(player) else Check(player)
+            is ThreeOfAKind -> if (state.currentBet - player.betThisRound < player.wealth / 10) Call(player) else Check(player)
             is Straight -> Raise(player, max(state.minBet, player.wealth / 6))
             is Flush -> Raise(player, max(state.minBet, player.wealth / 6))
             is FullHouse -> Raise(player, max(state.minBet, player.wealth / 3))

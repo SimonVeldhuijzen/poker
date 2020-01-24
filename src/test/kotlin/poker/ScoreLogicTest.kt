@@ -65,6 +65,45 @@ class ScoreLogicTest {
     }
 
     @Test
+    fun weirdTwo() {
+        val hand = listOf(
+                Card(CardSuit.CLUBS, CardRank(13)),
+                Card(CardSuit.HEARTS, CardRank(13)),
+                Card(CardSuit.DIAMONDS, CardRank(12)),
+                Card(CardSuit.SPADES, CardRank(12)),
+                Card(CardSuit.CLUBS, CardRank(14)),
+                Card(CardSuit.HEARTS, CardRank(11)),
+                Card(CardSuit.DIAMONDS, CardRank(11))
+        )
+
+        val result = rankHand(hand)
+
+        assertEquals(TwoPair::class, result::class)
+        assertEquals(13, result.deciders[0])
+        assertEquals(12, result.deciders[1])
+        assertEquals(14, result.deciders[2])
+    }
+
+    @Test
+    fun weirdFour() {
+        val hand = listOf(
+                Card(CardSuit.CLUBS, CardRank(13)),
+                Card(CardSuit.HEARTS, CardRank(13)),
+                Card(CardSuit.DIAMONDS, CardRank(13)),
+                Card(CardSuit.SPADES, CardRank(13)),
+                Card(CardSuit.CLUBS, CardRank(14)),
+                Card(CardSuit.HEARTS, CardRank(11)),
+                Card(CardSuit.DIAMONDS, CardRank(11))
+        )
+
+        val result = rankHand(hand)
+
+        assertEquals(FourOfAKind::class, result::class)
+        assertEquals(13, result.deciders[0])
+        assertEquals(14, result.deciders[1])
+    }
+
+    @Test
     fun fullHouse() {
         val hand = listOf(
             Card(CardSuit.CLUBS, CardRank(6)),
