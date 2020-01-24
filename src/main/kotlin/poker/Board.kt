@@ -264,7 +264,33 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
     }
 
     private fun handleShowdown() {
-        endWithoutShowdown()
+        players.forEach {
+            it.betTotal += it.betThisRound
+            it.betThisRound = 0
+        }
+        val results = applyShowDown(this).toMap()
+
+        val amounts = results.map { it.key.betTotal }.distinct().sorted() - listOf(0)
+        var previous = 0
+        for (amount in amounts) {
+            val actualAmount = amount - previous
+            val playersWithHands = results.filter { it.key.betTotal != 0 && it.key !in foldedPlayers }
+            val highest = playersWithHands.maxBy { it.value }
+            val winners = playersWithHands.filter { it.value.compareTo(highest!!.value) == 0 }
+            val pot = actualAmount * playersWithHands.size / winners.size
+            winners.forEach {
+                it.key.wealth += pot
+            }
+
+            playersWithHands.forEach {
+                it.key.betTotal -= actualAmount
+            }
+
+            previous = amount
+        }
+
+        actions.add(Showdown())
+        isFinished = true
     }
 
     private fun initializeRound() {
