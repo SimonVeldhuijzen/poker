@@ -23,6 +23,7 @@ fun applyShowDown(board: Board): List<kotlin.Pair<Player, PokerHand>> {
 }
 
 fun rankHand(cards: List<Card>): PokerHand {
+    println(cards.size)
     val sortedByRanks = cards.sortedByDescending { it.rank.rank }
     val straight = straight(sortedByRanks)
     if (straight != null) {
