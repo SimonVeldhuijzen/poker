@@ -387,12 +387,11 @@ class SirRaiseALot(override var name: String = "sdafasfdasffffffffffffffffffffas
                 return raise(player)
             } else if (hand == 1){
                 setWillingToBetLow()
-                raise(player)
+                return raise(player)
             } else {
                 return Check(player)
             }
         }
-        return Raise(player, 100)
     }
 
     fun raise(player: Player): PlayerAction {

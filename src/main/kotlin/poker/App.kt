@@ -10,7 +10,7 @@ fun main(args: Array<String>) {
         alsucfnhaiegsdruifjklgjdkljhjhgfdsdhjkjhgfdryuiyrwqyuikdsjkdmnbvcxvbnmfdgjkjretyutrewhjmnxvbnmnbcdfghjkjgweyuiutrewrj(),
         Cheetos("Joeri", 0.5f),
         BarryDePokerTovenaar(),
-        SirRaiseALot("SirRaiseALot")
+        SirRaiseALot("SirRaiseALot", 1)
     ).mapIndexed { i, ai ->
         Player(i, ai.name, 10000, 0, 0, null, mutableListOf(), ai)
     }
