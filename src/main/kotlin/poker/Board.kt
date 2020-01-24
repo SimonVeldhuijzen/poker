@@ -36,18 +36,23 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         initializeRound()
 
         while (!isFinished) {
-            val player = copyPlayer(currentPlayer, true)
-            val board = copyBoard()
+            if (activePlayers.size > 1) {
+                val player = copyPlayer(currentPlayer, true)
+                val board = copyBoard()
 
 //            println("Player to move: ${player.name} (wealth: ${player.wealth}; betted this round: ${player.betThisRound}; betted this hand: ${player.betTotal}")
 
-            val move = try {
-                player.move(board)
-            } catch(_: Exception) {
-                Fold(currentPlayer)
+                val move = try {
+                    player.move(board)
+                } catch(_: Exception) {
+                    Fold(currentPlayer)
+                }
+
+                handlePlayerInput(move)
             }
 
-            handlePlayerInput(move)
+            println("Current total: ${players.sumBy { it.wealth + it.betThisRound + it.betTotal }}; active players: ${activePlayers.size}")
+            checkTransition()
         }
     }
 
@@ -65,8 +70,6 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         actions.add(result)
         currentPlayer.lastAction = result::class
         currentPlayer = nextPlayer(currentPlayer)
-
-        checkTransition()
     }
 
     private fun smallBlind(): PlayerAction {
@@ -208,6 +211,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
     }
 
     private fun endWithoutShowdown() {
+        println("Current total: ${players.sumBy { it.wealth + it.betThisRound + it.betTotal }}; active players: ${activePlayers.size}")
         val winner = activePlayers[0]
         players.forEach {
             it.betTotal += it.betThisRound
@@ -215,7 +219,8 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         }
 
         winner.wealth += players.map { it.betTotal }.sum()
-        if (!isValid()) {
+        println("Current total: ${players.sumBy { it.wealth }}; active players: ${activePlayers.size}")
+        if (players.sumBy { it.wealth } != 40000) {
             println()
         }
         isFinished = true
@@ -244,57 +249,27 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
             return handleShowdown()
         }
 
-        println("resetting bet")
         currentBet = 0
         players.forEach {
             it.betTotal += it.betThisRound
             it.betThisRound = 0
             it.lastAction = null
         }
+
+        println("Current total: ${players.sumBy { it.wealth + it.betThisRound + it.betTotal }}; active players: ${activePlayers.size}")
+
         if (!isValid()) {
             println()
         }
     }
 
     private fun handleShowdown() {
-        players.forEach {
-            it.betTotal += it.betThisRound
-            it.betThisRound = 0
-        }
-        val results = applyShowDown(this).filter {
-            it.first in activePlayers || it.first in allInPlayers
-        }.toMap()
-
-        val amounts = results.map { it.key.betTotal }.distinct().sorted() - listOf(0)
-        var previous = 0
-        for (amount in amounts) {
-            val actualAmount = amount - previous
-            val playersWithHands = results.filter { it.key.betTotal != 0 }
-            val highest = playersWithHands.maxBy { it.value }
-            val winners = playersWithHands.filter { it.value.compareTo(highest!!.value) == 0 }
-            val pot = actualAmount * playersWithHands.size / winners.size
-            winners.forEach {
-                it.key.wealth += pot
-            }
-
-            playersWithHands.forEach {
-                it.key.betTotal -= actualAmount
-            }
-
-            previous = amount
-        }
-
-        actions.add(Showdown())
-        if (!isValid()) {
-            println()
-        }
-        isFinished = true
+        endWithoutShowdown()
     }
 
     private fun initializeRound() {
         actions.clear()
         isFinished = false
-        println("resetting bet")
         currentBet = 0
 
         activePlayers.clear()
@@ -309,10 +284,6 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         deck.clear()
         deck.addAll(CardSuit.values().flatMap { suit -> (2..14).map { rank -> Card(suit, CardRank(rank)) } })
         deck.shuffle()
-
-        if (!isValid()) {
-            println()
-        }
 
         players.forEach {
             it.cards.clear()
