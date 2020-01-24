@@ -33,6 +33,12 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         println("new round")
         initializeRound()
 
+        for (player in players) {
+            println("Player ${player.name} has wealth ${player.wealth}")
+        }
+
+        readLine()
+
         while (!isFinished) {
             if (needsActionFromPlayer()) {
                 val player = copyPlayer(currentPlayer, true)

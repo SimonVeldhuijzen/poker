@@ -12,23 +12,6 @@ fun main(args: Array<String>) {
         Player(i, ai.name, 10000, 0, 0, null, mutableListOf(), ai)
     }
 
-//    try {
-//        board.playGame()
-//    } catch (_: Exception) {
-//        try {
-//            board.playGame()
-//        } catch (_: Exception) {
-//            try {
-//                board.playGame()
-//            } catch (_: Exception) {
-//                try {
-//                    board.playGame()
-//                } catch (_: Exception) {
-//
-//                }
-//            }
-//        }
-//    }
     val board = Board(players)
     board.playGame()
 
