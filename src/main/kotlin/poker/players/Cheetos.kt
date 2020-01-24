@@ -3,7 +3,7 @@ package poker.players
 import poker.*
 import kotlin.math.pow
 
-class Cheetos(override var name: String) : AIPlayer {
+class Cheetos(override var name: String, var acceptableRisk: Float) : AIPlayer {
     private val totalHands          = 133784560
     private val highCardHands       = 22294460
     private val pairHands           = 58627800
@@ -44,9 +44,7 @@ class Cheetos(override var name: String) : AIPlayer {
             listOf<Float>(0F,0F,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0.83F,0.66F),
             listOf<Float>(0F,0F,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0F   ,0.85F)
     )
-
-    private val acceptableRisk = 0.5
-
+    
     override fun move(state: Board, player: Player): PlayerAction {
         var winChance: Float
         if (state.communityCards.size == 0) {
@@ -55,12 +53,23 @@ class Cheetos(override var name: String) : AIPlayer {
             ranks = ranks.sorted()
             winChance = startingHandOdds[ranks[0]][ranks[1]]
 
-        } else {
+        } else if (state.communityCards.size == 5){
             val handToRank = player.cards
             handToRank.addAll(state.communityCards)
             val rankedHand = rankHand(handToRank)
             var winsOf: Float = (belowHands.get(rankedHand.handRank).toFloat()) / (totalHands.toFloat())
             winChance = 1 - winsOf.pow(state.activePlayers.size - 1)
+        } else {
+            var ranks = player.cards.map { it.rank.rank }
+            ranks = ranks.sorted()
+            var winChanceOld = startingHandOdds[ranks[0]][ranks[1]]
+
+            val handToRank = player.cards
+            handToRank.addAll(state.communityCards)
+            val rankedHand = rankHand(handToRank)
+            var winsOf: Float = (belowHands.get(rankedHand.handRank).toFloat()) / (totalHands.toFloat())
+            println("$winsOf")
+            winChance = ((1 - winsOf.pow(state.activePlayers.size - 1)) + winChanceOld) / 2
         }
 
         var harm: Float = (player.betTotal.toFloat() + state.currentBet.toFloat()) / player.wealth.toFloat()
@@ -74,7 +83,7 @@ class Cheetos(override var name: String) : AIPlayer {
         println("Hmm: $winChance, $harm, $risk")
 
         if (risk <= acceptableRisk) {
-            return Call(player, 0)
+            return Call(player)
         } else {
             return Check(player)
         }
