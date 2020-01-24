@@ -8,6 +8,8 @@ import poker.PlayerAction
 
 class S: AIPlayer {
 
+    override var name = "Simon"
+
     override fun move(state: Board, player: Player): PlayerAction {
         return Check(player)
     }
