@@ -10,4 +10,8 @@ fun main(args: Array<String>) {
 
     val board = Board(players)
     board.playGame()
+
+    for (player in players) {
+        println("Player ${player.id} has wealth ${player.wealth}")
+    }
 }

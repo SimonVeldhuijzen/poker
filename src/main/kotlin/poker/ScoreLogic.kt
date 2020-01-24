@@ -101,7 +101,7 @@ fun straightFlush(cards: List<Card>, highest: Int): StraightFlush? {
 
 fun fourOfAKind(cards: List<Card>): FourOfAKind? {
     val value = cards.groupBy { it.rank.rank }.toList().firstOrNull { it.second.size == 4 }?.second?.first()?.rank?.rank ?: return null
-    val decider = cards.first { it.rank.rank != value }.rank.rank
+    val decider = cards.firstOrNull { it.rank.rank != value }?.rank?.rank ?: 0
     return FourOfAKind(value, decider)
 }
 
@@ -132,7 +132,7 @@ fun twoPair(cards: List<Card>): TwoPair? {
     if (values.size >= 2) {
         val value1 = values[0].first
         val value2 = values[1].first
-        val decider = cards.first { it.rank.rank !in listOf(value1, value2) }.rank.rank
+        val decider = cards.firstOrNull { it.rank.rank !in listOf(value1, value2) }?.rank?.rank ?: 1
         return TwoPair(value1, value2, decider)
     }
 
