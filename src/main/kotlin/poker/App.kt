@@ -7,7 +7,10 @@ fun main(args: Array<String>) {
     val players = listOf(
         S(),
         Mitchell(),
-        alsucfnhaiegsdruifjklgjdkljhjhgfdsdhjkjhgfdryuiyrwqyuikdsjkdmnbvcxvbnmfdgjkjretyutrewhjmnxvbnmnbcdfghjkjgweyuiutrewrj()
+        alsucfnhaiegsdruifjklgjdkljhjhgfdsdhjkjhgfdryuiyrwqyuikdsjkdmnbvcxvbnmfdgjkjretyutrewhjmnxvbnmnbcdfghjkjgweyuiutrewrj(),
+        Cheetos("Joeri"),
+        BarryDePokerTovenaar(),
+        SirRaiseALot("SirRaiseALot")
     ).mapIndexed { i, ai ->
         Player(i, ai.name, 10000, 0, 0, null, mutableListOf(), ai)
     }

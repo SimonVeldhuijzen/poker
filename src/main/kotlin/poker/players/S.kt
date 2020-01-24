@@ -49,9 +49,9 @@ class S(override var name: String = "Simon") : AIPlayer {
         }
 
         val risk = betDeltaPercentage / handScore
-        if (risk > 100) {
+        if (risk > 200) {
             return Check(player)
-        } else if (risk > 50) {
+        } else if (risk > 100) {
             return Call(player)
         } else {
             return Raise(player, (player.wealth - betDelta) / risk.toInt())
