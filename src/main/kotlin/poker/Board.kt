@@ -21,7 +21,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
     override fun toString() = "Community cards: $communityCards; currentBet: $currentBet"
 
     fun playGame() {
-        while((players.filter { it.isActive }).size > 1) {
+        while((players.filter { it.wealth > 0 }).size > 1) {
             playRound()
         }
     }
