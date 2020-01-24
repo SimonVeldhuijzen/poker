@@ -15,9 +15,9 @@ class Mitchell: AIPlayer {
         val playerAction: PlayerAction
         println("type $pokerhand.")
         if (pokerhand is HighCard) {
-            playerAction = Check(player)
-        } else {
             playerAction = listOfPlayers.random().move(state, player)
+        } else {
+            playerAction = Check(player)
         }
         return playerAction
     }
