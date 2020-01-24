@@ -69,7 +69,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
 
     private fun smallBlind(): PlayerAction {
         val amount = min(minBet / 2, smallBlind.wealth)
-        println("Small blind of $amount by ${smallBlind.id}")
+        println("Small blind of $amount by ${smallBlind.name}")
         smallBlind.wealth -= amount
         smallBlind.betThisRound += amount
         currentBet = amount
@@ -78,7 +78,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
 
     private fun bigBlind(): PlayerAction {
         val amount = min(minBet, smallBlind.wealth)
-        println("Big blind of $amount by ${bigBlind.id}")
+        println("Big blind of $amount by ${bigBlind.name}")
         bigBlind.wealth -= amount
         bigBlind.betThisRound += amount
         currentBet = amount
@@ -88,17 +88,17 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
     private fun check(): PlayerAction {
         checks--
         return if (currentPlayer.betThisRound == currentBet) {
-            println("Check by ${currentPlayer.id}")
+            println("Check by ${currentPlayer.name}")
             Check(currentPlayer)
         } else {
-            println("Fold by ${currentPlayer.id}")
+            println("Fold by ${currentPlayer.name}")
             Fold(currentPlayer)
         }
     }
 
     private fun fold(): PlayerAction {
         checks--
-        println("Fold by ${currentPlayer.id}")
+        println("Fold by ${currentPlayer.name}")
         return Fold(currentPlayer)
     }
 
@@ -106,12 +106,12 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         checks--
         val amount = min(currentPlayer.wealth, currentBet - currentPlayer.betThisRound)
         return if (amount == 0) {
-            println("Check by ${currentPlayer.id}")
+            println("Check by ${currentPlayer.name}")
             Check(currentPlayer)
         } else {
             currentPlayer.wealth -= amount
             currentPlayer.betThisRound += amount
-            println("Call of $amount by ${currentPlayer.id}")
+            println("Call of $amount by ${currentPlayer.name}")
             Call(currentPlayer, amount)
         }
     }
@@ -120,12 +120,12 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         call()
         val actualAmount = min(currentPlayer.wealth, amount)
         if (actualAmount == currentPlayer.wealth) {
-            println("All in of $actualAmount by ${currentPlayer.id}")
+            println("All in of $actualAmount by ${currentPlayer.name}")
             return allIn()
         }
 
         if (actualAmount < minBet) {
-            println("Fold by ${currentPlayer.id}")
+            println("Fold by ${currentPlayer.name}")
             return Fold(currentPlayer)
         }
 
@@ -134,7 +134,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         currentBet += actualAmount
 
         checks = players.count { it.isActive && it.wealth > 0 } - 1
-        println("Raise of $actualAmount by ${currentPlayer.id}")
+        println("Raise of $actualAmount by ${currentPlayer.name}")
         return Raise(currentPlayer, actualAmount)
     }
 
@@ -150,7 +150,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         currentBet += amount
 
         checks = players.count { it.isActive && it.wealth > 0 }
-        println("All in of $amount by ${currentPlayer.id}")
+        println("All in of $amount by ${currentPlayer.name}")
         return AllIn(currentPlayer, amount)
     }
 
