@@ -1,10 +1,9 @@
 package poker
 
-import poker.players.HumanPlayer
-import poker.players.RandomPlayer
+import poker.players.*
 
 fun main(args: Array<String>) {
-    val players = listOf(RandomPlayer(), RandomPlayer(), RandomPlayer(), RandomPlayer()).mapIndexed { i, ai ->
+    val players = listOf(RandomPlayer("A"), RandomPlayer("B"), RandomPlayer("C"), RandomPlayer("D")).mapIndexed { i, ai ->
         Player(i, ai.name, 10000, 0, 0, null, mutableListOf(), ai)
     }
 
@@ -12,6 +11,6 @@ fun main(args: Array<String>) {
     board.playGame()
 
     for (player in players) {
-        println("Player ${player.id} has wealth ${player.wealth}")
+        println("Player ${player.name} has wealth ${player.wealth}")
     }
 }

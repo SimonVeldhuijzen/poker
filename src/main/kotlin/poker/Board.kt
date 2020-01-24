@@ -36,18 +36,23 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         initializeRound()
 
         while (!isFinished) {
-            val player = copyPlayer(currentPlayer, true)
-            val board = copyBoard()
+            if (activePlayers.size > 1) {
+                val player = copyPlayer(currentPlayer, true)
+                val board = copyBoard()
 
-//            println("Player to move: ${player.id} (wealth: ${player.wealth}; betted this round: ${player.betThisRound}; betted this hand: ${player.betTotal}")
+//            println("Player to move: ${player.name} (wealth: ${player.wealth}; betted this round: ${player.betThisRound}; betted this hand: ${player.betTotal}")
 
-            val move = try {
-                player.move(board)
-            } catch(_: Exception) {
-                Fold(currentPlayer)
+                val move = try {
+                    player.move(board)
+                } catch(_: Exception) {
+                    Fold(currentPlayer)
+                }
+
+                handlePlayerInput(move)
             }
 
-            handlePlayerInput(move)
+            println("Current total: ${players.sumBy { it.wealth + it.betThisRound + it.betTotal }}; active players: ${activePlayers.size}")
+            checkTransition()
         }
     }
 
@@ -65,8 +70,6 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         actions.add(result)
         currentPlayer.lastAction = result::class
         currentPlayer = nextPlayer(currentPlayer)
-
-        checkTransition()
     }
 
     private fun smallBlind(): PlayerAction {
@@ -79,7 +82,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
             return allIn()
         }
 
-        println("Small blind of $amount by ${currentPlayer.id}")
+        println("Small blind of $amount by ${currentPlayer.name}")
         currentPlayer.wealth -= amount
         currentPlayer.betThisRound += amount
         currentBet = amount
@@ -97,7 +100,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
             return allIn()
         }
 
-        println("Big blind of $amount by ${currentPlayer.id}")
+        println("Big blind of $amount by ${currentPlayer.name}")
         currentPlayer.wealth -= amount
         currentPlayer.betThisRound += amount
         currentBet = amount
@@ -107,7 +110,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
 
     private fun check(): PlayerAction {
         if (currentPlayer.betThisRound == currentBet) {
-            println("Check by ${currentPlayer.id}")
+            println("Check by ${currentPlayer.name}")
             return Check(currentPlayer)
         } else {
             return fold()
@@ -118,7 +121,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         activePlayers.remove(currentPlayer)
         foldedPlayers.add(currentPlayer)
 
-        println("Fold by ${currentPlayer.id}")
+        println("Fold by ${currentPlayer.name}")
         return Fold(currentPlayer)
     }
 
@@ -131,7 +134,12 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         } else {
             currentPlayer.wealth -= toCall
             currentPlayer.betThisRound += toCall
-            println("Call of $toCall by ${currentPlayer.id}")
+            println("Call of $toCall by ${currentPlayer.name}")
+
+            if (!isValid()) {
+                println()
+            }
+
             return Call(currentPlayer, toCall)
         }
     }
@@ -145,7 +153,11 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
             currentPlayer.wealth -= amount
             currentPlayer.betThisRound += amount
             currentBet += amount
-            println("Raise of $amount by ${currentPlayer.id}")
+
+            if (!isValid()) {
+                println()
+            }
+            println("Raise of $amount by ${currentPlayer.name}")
             return Raise(currentPlayer, amount)
         }
     }
@@ -154,15 +166,19 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         val adding = max(0, currentPlayer.wealth - (currentBet - currentPlayer.betThisRound))
         if (adding > 0) {
             currentBet += adding
-            println("All in by raising with $adding by ${currentPlayer.id}")
+            println("All in by raising with $adding by ${currentPlayer.name}")
         } else {
-            println("All in by ${currentPlayer.id}")
+            println("All in by ${currentPlayer.name}")
         }
 
         currentPlayer.betThisRound += currentPlayer.wealth
         currentPlayer.wealth = 0
         activePlayers.remove(currentPlayer)
         allInPlayers.add(currentPlayer)
+
+        if (!isValid()) {
+            println()
+        }
 
         return AllIn(currentPlayer, adding)
     }
@@ -195,6 +211,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
     }
 
     private fun endWithoutShowdown() {
+        println("Current total: ${players.sumBy { it.wealth + it.betThisRound + it.betTotal }}; active players: ${activePlayers.size}")
         val winner = activePlayers[0]
         players.forEach {
             it.betTotal += it.betThisRound
@@ -202,57 +219,52 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         }
 
         winner.wealth += players.map { it.betTotal }.sum()
+        println("Current total: ${players.sumBy { it.wealth }}; active players: ${activePlayers.size}")
+        if (players.sumBy { it.wealth } != 40000) {
+            println()
+        }
         isFinished = true
     }
 
     private fun goToNextPhase() {
         if (communityCards.size == 0) {
             println("Flop")
-            actions.add(Flop(deck.removeAt(0), deck.removeAt(0), deck.removeAt(0)))
+            val flop = Flop(deck.removeAt(0), deck.removeAt(0), deck.removeAt(0))
+            actions.add(flop)
+            communityCards.add(flop.first)
+            communityCards.add(flop.second)
+            communityCards.add(flop.third)
         } else if (communityCards.size == 3) {
             println("Turn")
-            actions.add(Turn(deck.removeAt(0)))
+            val turn = Turn(deck.removeAt(0))
+            actions.add(turn)
+            communityCards.add(turn.fourth)
         } else if (communityCards.size == 4) {
             println("River")
-            actions.add(River(deck.removeAt(0)))
+            val river = River(deck.removeAt(0))
+            actions.add(river)
+            communityCards.add(river.fifth)
         } else {
             println("Showdown")
             return handleShowdown()
         }
 
         currentBet = 0
-    }
-
-    private fun handleShowdown() {
         players.forEach {
             it.betTotal += it.betThisRound
             it.betThisRound = 0
-        }
-        val results = applyShowDown(this).filter {
-            it.first in activePlayers || it.first in allInPlayers
-        }.toMap()
-
-        val amounts = results.map { it.key.betTotal }.distinct().sorted() - listOf(0)
-        var previous = 0
-        for (amount in amounts) {
-            val actualAmount = amount - previous
-            val playersWithHands = results.filter { it.key.betTotal != 0 }
-            val highest = playersWithHands.maxBy { it.value }
-            val winners = playersWithHands.filter { it.value.compareTo(highest!!.value) == 0 }
-            val pot = actualAmount * playersWithHands.size / winners.size
-            winners.forEach {
-                it.key.wealth += pot
-            }
-
-            playersWithHands.forEach {
-                it.key.betTotal -= actualAmount
-            }
-
-            previous = amount
+            it.lastAction = null
         }
 
-        actions.add(Showdown())
-        isFinished = true
+        println("Current total: ${players.sumBy { it.wealth + it.betThisRound + it.betTotal }}; active players: ${activePlayers.size}")
+
+        if (!isValid()) {
+            println()
+        }
+    }
+
+    private fun handleShowdown() {
+        endWithoutShowdown()
     }
 
     private fun initializeRound() {
@@ -272,6 +284,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         deck.clear()
         deck.addAll(CardSuit.values().flatMap { suit -> (2..14).map { rank -> Card(suit, CardRank(rank)) } })
         deck.shuffle()
+
         players.forEach {
             it.cards.clear()
             it.cards.add(deck.removeAt(0))
@@ -282,6 +295,10 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         }
 
         dealer = nextPlayer(dealer)
+
+        if (!isValid()) {
+            println()
+        }
 
         currentPlayer = nextPlayer(dealer)
         handlePlayerInput(SmallBlind(currentPlayer, minBet / 2))
@@ -317,6 +334,10 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
             it.allInPlayers.addAll(allInPlayers.map { p ->  copyPlayer(p, p == currentPlayer) })
             it.bankruptPlayers.addAll(bankruptPlayers.map { p ->  copyPlayer(p, p == currentPlayer) })
         }
+    }
+
+    private fun isValid(): Boolean {
+        return players.sumBy { it.wealth + it.betTotal + it.betThisRound } == 40000
     }
 
     companion object {
