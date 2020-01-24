@@ -52,6 +52,7 @@ data class Card(val suit: CardSuit, val rank: CardRank) {
 
 sealed class TurnAction { abstract fun copy() : TurnAction }
 sealed class PlayerAction: TurnAction() { abstract val player: Player }
+sealed class BoardAction: TurnAction()
 
 class Check(override val player: Player): PlayerAction() { override fun copy() = Check(copyPlayer(player, false)) }
 class Fold(override val player: Player): PlayerAction() { override fun copy() = Fold(copyPlayer(player, false)) }
@@ -60,7 +61,7 @@ class Raise(override val player: Player, val amount: Int): PlayerAction() { over
 class AllIn(override val player: Player, val amount: Int): PlayerAction() { override fun copy() = AllIn(copyPlayer(player, false), amount) }
 class SmallBlind(override val player: Player, val amount: Int): PlayerAction() { override fun copy() = SmallBlind(copyPlayer(player, false), amount) }
 class BigBlind(override val player: Player, val amount: Int): PlayerAction() { override fun copy() = BigBlind(copyPlayer(player, false), amount) }
-class Flop(val first: Card, val second: Card, val third: Card): TurnAction() { override fun copy() = Flop(first.copy(), second.copy(), third.copy()) }
-class Turn(val fourth: Card): TurnAction() { override fun copy() = Turn(fourth.copy()) }
-class River(val fifth: Card): TurnAction() { override fun copy() = River(fifth.copy()) }
-class Showdown: TurnAction() { override fun copy() = Showdown() }
+class Flop(val first: Card, val second: Card, val third: Card): BoardAction() { override fun copy() = Flop(first.copy(), second.copy(), third.copy()) }
+class Turn(val fourth: Card): BoardAction() { override fun copy() = Turn(fourth.copy()) }
+class River(val fifth: Card): BoardAction() { override fun copy() = River(fifth.copy()) }
+class Showdown: BoardAction() { override fun copy() = Showdown() }
