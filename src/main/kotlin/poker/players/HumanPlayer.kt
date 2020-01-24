@@ -10,6 +10,8 @@ import poker.PlayerAction
 import poker.Raise
 
 class HumanPlayer: AIPlayer {
+    override var name: String = "HumanPlayer"
+
     override fun move(state: Board, player: Player): PlayerAction {
         return when (val action = readLine()) {
             "p" -> Check(player)
