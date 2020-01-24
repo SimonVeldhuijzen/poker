@@ -211,7 +211,9 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
         val maxBett = maxBet.betThisRound + maxBet.betTotal
         if (activePlayers.size == 0) {
             return true
-        } else if (activePlayers.all { it.betThisRound + it.betTotal == maxBett && it.lastAction != BigBlind::class && it.lastAction != SmallBlind::class }) {
+        } else if (activePlayers.all { it.lastAction == Check::class || it.lastAction == Call::class }) {
+
+//        } else if (activePlayers.all { it.betThisRound + it.betTotal == maxBett && it.lastAction != BigBlind::class && it.lastAction != SmallBlind::class }) {
             return true
         } else {
             val raisers = activePlayers.filter { it.lastAction == Raise::class }
