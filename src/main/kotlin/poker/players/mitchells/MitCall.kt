@@ -1,4 +1,4 @@
-package poker.players
+package poker.players.mitchells
 
 import poker.*
 import java.util.*
