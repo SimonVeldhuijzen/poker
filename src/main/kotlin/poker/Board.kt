@@ -158,7 +158,7 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
             println("Call of $toCall by ${currentPlayer.name}")
 
             if (!isValid()) {
-                
+
             }
 
             return Call(currentPlayer)
@@ -166,6 +166,7 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
     }
 
     private fun raise(amount: Int): PlayerAction {
+        call()
         if (currentPlayer.wealth <= amount) {
             return allIn()
         } else if (amount < minBet) {
@@ -177,7 +178,7 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
             currentBet += amount
 
             if (!isValid()) {
-                
+
             }
             println("Raise of $amount by ${currentPlayer.name}")
             return Raise(currentPlayer, amount)
@@ -199,21 +200,23 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
         allInPlayers.add(currentPlayer)
 
         if (!isValid()) {
-            
+
         }
 
         return AllIn(currentPlayer, adding)
     }
 
     private fun isEndOfBettingRound(): Boolean {
-        if (activePlayers.size < 2) {
+        val maxBet = players.maxBy { it.betThisRound + it.betTotal }!!
+        val maxBett = maxBet.betThisRound + maxBet.betTotal
+        if (activePlayers.size == 0) {
             return true
-        } else if (activePlayers.all { it.lastAction == Check::class || it.lastAction == Call::class }) {
+        } else if (activePlayers.all { it.betThisRound + it.betTotal == maxBett && it.lastAction != BigBlind::class && it.lastAction != SmallBlind::class }) {
             return true
         } else {
             val raisers = activePlayers.filter { it.lastAction == Raise::class }
             if (raisers.size == 1) {
-                return raisers[0] == currentPlayer
+                return raisers[0] == currentPlayer && (raisers[0].wealth > 0 && raisers[0].betThisRound < currentBet)
             } else {
                 return false
             }
@@ -243,7 +246,7 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
         winner.wealth += players.map { it.betTotal }.sum()
         println("${winner.wealth})")
         if (players.sumBy { it.wealth } != 40000) {
-            
+
         }
         isFinished = true
     }
@@ -273,7 +276,7 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
                 val value = playerIterator.next()
                 println(value.name + " has a " + rankHand(value.cards + communityCards) + " with: " + value.cards)
             }
-            
+
             return handleShowdown()
         }
 
@@ -286,7 +289,7 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
 
 
         if (!isValid()) {
-            
+
         }
     }
 
@@ -299,6 +302,12 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
 
         val playersInShowDown = (players - foldedPlayers).sortedByDescending { results[it] }.toMutableList()
 
+        val highestBet = playersInShowDown.maxBy { it.betTotal }!!
+        if (playersInShowDown.any { it.betTotal != highestBet.betTotal && it.wealth > 0 }) {
+//            error("not calling wtf")
+        }
+
+        var change = 0
         while(playersInShowDown.isNotEmpty()) {
             val bestHand = results[playersInShowDown[0]]!!
             val winners = playersInShowDown.filter { results[it]!!.compareTo(bestHand) == 0 }.sortedBy { it.betTotal }
@@ -310,6 +319,7 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
                     it.betTotal -= money
                     money
                 }
+                change += moneySum
                 val moneyPerGuy = moneySum / winners.size
                 winners.forEach { it.wealth += moneyPerGuy }
                 winners[0].wealth += moneySum - moneyPerGuy * winners.size
@@ -320,7 +330,9 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
         if (players.any { it.betThisRound > 0 }) {
             error("Unreachable")
         }
-
+        if (change > 5000) {
+//            while (!readLine()!!.contains("n"));
+        }
         actions.add(Showdown())
         isFinished = true
     }
@@ -356,7 +368,7 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
         dealer = nextPlayer(dealer)
 
         if (!isValid()) {
-            
+
         }
 
         currentPlayer = nextPlayer(dealer)
