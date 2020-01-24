@@ -23,10 +23,30 @@ data class Player(
     fun move(board: Board) = ai.move(board, this)
 }
 
-enum class CardSuit { HEARTS, DIAMONDS, SPADES, CLUBS }
+enum class CardSuit {
+    HEARTS, DIAMONDS, SPADES, CLUBS;
+
+    override fun toString() = when(this) {
+        CLUBS -> "C"
+        DIAMONDS -> "D"
+        HEARTS -> "H"
+        SPADES -> "S"
+    }
+}
 // 2-10 -> 2-10, JQKA -> 11-14
-data class CardRank(val rank: Int)
-data class Card(val suit: CardSuit, val rank: CardRank)
+data class CardRank(val rank: Int) {
+    override fun toString() = when(this.rank) {
+        in 2..10 -> this.rank.toString()
+        11 -> "J"
+        12 -> "Q"
+        13 -> "K"
+        14 -> "A"
+        else -> error("INVALID CARD")
+    }
+}
+data class Card(val suit: CardSuit, val rank: CardRank) {
+    override fun toString() = "$suit$rank"
+}
 
 sealed class TurnAction { abstract fun copy() : TurnAction }
 sealed class PlayerAction: TurnAction() { abstract val player: Player }
