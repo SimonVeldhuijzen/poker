@@ -55,7 +55,6 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
                 handlePlayerInput(move)
             }
 
-            println("Current total: ${players.sumBy { it.wealth + it.betThisRound + it.betTotal }}; active players: ${activePlayers.size}")
             checkTransition()
         }
     }
@@ -94,6 +93,7 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
 
     private fun smallBlind(): PlayerAction {
         if (actions.size > 0) {
+            println("ILLEGAL ACTION BY ${currentPlayer.name} (smallblind)")
             return fold()
         }
 
@@ -112,6 +112,7 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
 
     private fun bigBlind(): PlayerAction {
         if (actions.size != 1) {
+            println("ILLEGAL ACTION BY ${currentPlayer.name} (bigblind)")
             return fold()
         }
 
@@ -157,7 +158,7 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
             println("Call of $toCall by ${currentPlayer.name}")
 
             if (!isValid()) {
-                println()
+                
             }
 
             return Call(currentPlayer)
@@ -168,6 +169,7 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
         if (currentPlayer.wealth <= amount) {
             return allIn()
         } else if (amount < minBet) {
+            println("ILLEGAL ACTION BY ${currentPlayer.name} (amount too low)")
             return fold()
         } else {
             currentPlayer.wealth -= amount
@@ -175,7 +177,7 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
             currentBet += amount
 
             if (!isValid()) {
-                println()
+                
             }
             println("Raise of $amount by ${currentPlayer.name}")
             return Raise(currentPlayer, amount)
@@ -197,7 +199,7 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
         allInPlayers.add(currentPlayer)
 
         if (!isValid()) {
-            println()
+            
         }
 
         return AllIn(currentPlayer, adding)
@@ -231,7 +233,6 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
     }
 
     private fun endWithoutShowdown() {
-        println("Current total: ${players.sumBy { it.wealth + it.betThisRound + it.betTotal }}; active players: ${activePlayers.size}")
         val winner = activePlayers[0]
         players.forEach {
             it.betTotal += it.betThisRound
@@ -241,9 +242,8 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
         print("Winner: ${winner.name} (${winner.wealth} ->")
         winner.wealth += players.map { it.betTotal }.sum()
         println("${winner.wealth})")
-        println("Current total: ${players.sumBy { it.wealth }}; active players: ${activePlayers.size}")
         if (players.sumBy { it.wealth } != 40000) {
-            println()
+            
         }
         isFinished = true
     }
@@ -273,7 +273,7 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
                 val value = playerIterator.next()
                 println(value.name + " has a " + rankHand(value.cards + communityCards) + " with: " + value.cards)
             }
-            println()
+            
             return handleShowdown()
         }
 
@@ -284,10 +284,9 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
             it.lastAction = null
         }
 
-        println("Current total: ${players.sumBy { it.wealth + it.betThisRound + it.betTotal }}; active players: ${activePlayers.size}")
 
         if (!isValid()) {
-            println()
+            
         }
     }
 
@@ -357,7 +356,7 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
         dealer = nextPlayer(dealer)
 
         if (!isValid()) {
-            println()
+            
         }
 
         currentPlayer = nextPlayer(dealer)
