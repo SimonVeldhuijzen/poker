@@ -34,7 +34,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         initializeRound()
 
         while (!isFinished) {
-            if (activePlayers.size > 1) {
+            if (needsActionFromPlayer()) {
                 val player = copyPlayer(currentPlayer, true)
                 val board = copyBoard()
 
@@ -52,6 +52,22 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
             println("Current total: ${players.sumBy { it.wealth + it.betThisRound + it.betTotal }}; active players: ${activePlayers.size}")
             checkTransition()
         }
+    }
+
+    private fun needsActionFromPlayer(): Boolean {
+        if (activePlayers.size > 1) {
+            return true
+        }
+
+        if (activePlayers.size == 0) {
+            return false
+        }
+
+        if (actions.last() is BoardAction) {
+            return false
+        }
+
+        return currentPlayer.betThisRound != currentBet
     }
 
     private fun handlePlayerInput(input: PlayerAction) {
@@ -244,6 +260,12 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
             communityCards.add(river.fifth)
         } else {
             println("Showdown")
+            val playerIterator = players.iterator()
+            while (playerIterator.hasNext()) {
+                val value = playerIterator.next()
+                println(value.name + " has a " + rankHand(value.cards + communityCards))
+            }
+            println()
             return handleShowdown()
         }
 
