@@ -8,7 +8,6 @@ class Mitchell: AIPlayer {
     override var name: String = "Mitchell"
 
     override fun move(state: Board, player: Player): PlayerAction {
-        val listOfPlayers = listOf(MitCall(), MitchAllIn(), Raisechell())
         val listOfCards = player.cards + state.communityCards
         val pokerhand = rankHand(listOfCards)
 
