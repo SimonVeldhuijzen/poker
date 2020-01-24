@@ -1,9 +1,10 @@
 package poker.players
 
 import poker.*
+import kotlin.math.min
 import kotlin.math.pow
 
-class Cheetos(override var name: String, var acceptableRisk: Float) : AIPlayer {
+class Cheetos(override var name: String = "Cheetos", var acceptableRisk: Float) : AIPlayer {
     private val totalHands          = 133784560
     private val highCardHands       = 22294460
     private val pairHands           = 58627800
@@ -73,7 +74,7 @@ class Cheetos(override var name: String, var acceptableRisk: Float) : AIPlayer {
             winChance = ((1 - winsOf.pow(livePlayers - 1)) + winChanceOld) / 2
         }
 
-        var harm: Float = (player.betTotal.toFloat() + state.currentBet.toFloat()) / (player.wealth.toFloat() / (livePlayers * 2) )
+        var harm: Float = (player.betTotal.toFloat() + state.currentBet.toFloat()) / (min(player.wealth, 5000) )
         var risk = winChance * harm
 //        println("${player.cards[0].suit}:${player.cards[0].rank} + ${player.cards[1].suit}:${player.cards[1].rank}")
 //        for (card in state.communityCards) {
@@ -81,7 +82,7 @@ class Cheetos(override var name: String, var acceptableRisk: Float) : AIPlayer {
 //        }
 //        println("")
 //        println("${player.cards[0].suit}:${player.cards[0].rank} + ${player.cards[1].suit}:${player.cards[1].rank}")
-        println("Hmm: $winChance, $harm, $risk")
+//        println("Hmm: $winChance, $harm, $risk")
 
         if (risk <= acceptableRisk) {
             return Call(player)
