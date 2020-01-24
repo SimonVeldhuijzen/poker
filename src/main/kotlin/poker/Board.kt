@@ -184,7 +184,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
                 val river = River(deck.removeAt(0))
                 actions.add(river)
                 communityCards.add(river.fifth)
-                println("River: ${river.fifth}")
+                println("River")
             }
             actions.filterIsInstance<Flop>().any() -> {
                 val turn = Turn(deck.removeAt(0))
