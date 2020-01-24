@@ -190,7 +190,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
                 val turn = Turn(deck.removeAt(0))
                 actions.add(turn)
                 communityCards.add(turn.fourth)
-                println("Turn: ${turn.fourth}")
+                println("Turn")
             }
             else -> {
                 val flop = Flop(deck.removeAt(0), deck.removeAt(0), deck.removeAt(0))
