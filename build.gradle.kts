@@ -21,11 +21,6 @@ repositories {
 dependencies {
     // Use the Kotlin JDK 8 standard library.
     implementation(kotlin("stdlib-jdk8"))
-    implementation(kotlin("compiler"))
-    implementation(kotlin("script-util"))
-    implementation(kotlin("compiler-embeddable"))
-    implementation(kotlin("script-runtime"))
-    implementation(kotlin("scripting-jvm-host"))
 
     // Use the Kotlin test library.
     testImplementation(kotlin("test"))
