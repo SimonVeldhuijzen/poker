@@ -40,7 +40,8 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
 
                 val move = try {
                     player.move(board)
-                } catch(_: Exception) {
+                } catch(e: Exception) {
+                    e.printStackTrace()
                     Fold(currentPlayer)
                 }
 
@@ -112,7 +113,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
             currentPlayer.wealth -= amount
             currentPlayer.betThisRound += amount
             println("Call of $amount by ${currentPlayer.id}")
-            Call(currentPlayer, amount)
+            Call(currentPlayer)
         }
     }
 

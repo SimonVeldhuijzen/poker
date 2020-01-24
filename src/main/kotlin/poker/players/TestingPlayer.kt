@@ -17,7 +17,7 @@ class TestingPlayer(commands: String): AIPlayer {
         return when (val command = commands.removeAt(0)) {
             "p" -> Check(player)
             "f" -> Fold(player)
-            "c" -> Call(player, 0)
+            "c" -> Call(player)
             else -> Raise(player, command.toInt())
         }
     }
