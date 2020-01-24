@@ -6,6 +6,9 @@ sealed class PokerHand(val handRank: Int, vararg val deciders: Int) : Comparable
         deciders.forEachIndexed { i, r -> if (other.deciders[i] != r) return r - other.deciders[i]}
         return 0
     }
+    override fun toString(): String {
+        return super.toString().split(".")[1].split("@")[0]
+    }
 }
 
 class HighCard(vararg deciders: Int) : PokerHand(0, *deciders)

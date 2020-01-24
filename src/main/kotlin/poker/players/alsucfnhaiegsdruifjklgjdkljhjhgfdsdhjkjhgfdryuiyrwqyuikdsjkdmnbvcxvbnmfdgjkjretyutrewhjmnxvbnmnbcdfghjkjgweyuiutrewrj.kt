@@ -15,29 +15,32 @@ class alsucfnhaiegsdruifjklgjdkljhjhgfdsdhjkjhgfdryuiyrwqyuikdsjkdmnbvcxvbnmfdgj
         val myCards = player.cards
         val communityCards = state.communityCards
         val deckCards = (CardSuit.values().flatMap { suit -> (2..14).map { rank -> Card(suit, CardRank(rank)) } } - communityCards - myCards).toMutableList()
-        val pCount = state.players.count(Player::isActive)
+        val pCount = state.players.size - state.foldedPlayers.size
 
         val start = System.currentTimeMillis()
         var total = 0
         var wins = 0.0
-        while (System.currentTimeMillis() - start < 950) {
+        while (System.currentTimeMillis() - start < 950 && total < 10000) {
             deckCards.shuffle()
-            val lolRandom = deckCards.take(5 - communityCards.size + 2)
-            val other = communityCards + lolRandom.take(2)
-            val coms = lolRandom.drop(2) + communityCards
+            var lolRandom = deckCards.take(5 - communityCards.size + 2 * pCount)
+            val coms = communityCards + lolRandom.take(5 - communityCards.size)
+            lolRandom = lolRandom.drop(5 - communityCards.size)
+            val otherHands = (1..pCount).map {
+                val other = lolRandom.take(2) + coms
+                lolRandom = lolRandom.drop(2)
+                rankHand(other)
+            }
             val myHand = rankHand(myCards + coms)
-            val otherHand = rankHand(other + coms)
             total += 2
-            wins += myHand.compareTo(otherHand).sign + 1
+            wins += otherHands.map{ myHand.compareTo(it).sign + 1 }.min()!!
         }
-        val pWin1 = wins / total
-        val pWin = pWin1.pow(pCount - 1.0)
+        val pWin = wins / total
 
         val pLose = 1.0 - pWin
 
         val rBound = dikkePot*pWin/pLose
         return when {
-            rBound - toCall >= state.minBet && pWin > 0.8 -> Raise(player, (rBound - toCall).toInt())
+            rBound - toCall >= state.minBet -> Raise(player, (rBound - toCall).toInt())
             toCall == 0 -> Check(player)
             rBound >= toCall -> Call(player)
             else -> Fold(player)
