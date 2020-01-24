@@ -9,13 +9,29 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class BoardTest {
-    @Test
-    fun testStoppedBeforeShowdown() {
+//    @Test
+//    fun testStoppedBeforeShowdown() {
+//
+//        val tester1 = Player(1, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c f "))
+//        val tester2 = Player(2, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c c 400 "))
+//        val tester3 = Player(3, 10000, 0, 0, null, mutableListOf(), TestingPlayer("p f "))
+//        val tester4 = Player(4, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c 150 150 f "))
+//
+//        val players = listOf(tester1, tester2, tester3, tester4)
+//
+//        val board = Board(players)
+//        board.playRound()
+//
+//        assertEquals(10600, tester2.wealth)
+//    }
 
-        val tester1 = Player(1, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c f "))
-        val tester2 = Player(2, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c c 400 "))
-        val tester3 = Player(3, 10000, 0, 0, null, mutableListOf(), TestingPlayer("p f "))
-        val tester4 = Player(4, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c 150 150 f "))
+    @Test
+    fun testWeirdAllInBug() {
+
+        val tester1 = Player(1, 1000, 0, 0, null, mutableListOf(), TestingPlayer("c"))
+        val tester2 = Player(2, 1000, 0, 0, null, mutableListOf(), TestingPlayer("c"))
+        val tester3 = Player(3, 10000, 0, 0, null, mutableListOf(), TestingPlayer("f"))
+        val tester4 = Player(4, 10000, 0, 0, null, mutableListOf(), TestingPlayer("3000"))
 
         val players = listOf(tester1, tester2, tester3, tester4)
 
@@ -25,51 +41,51 @@ class BoardTest {
         assertEquals(10600, tester2.wealth)
     }
 
-    @Test
-    fun testOnlyChecking() {
-
-        val tester1 = Player(1, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c p p p f"))
-        val tester2 = Player(2, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c p p 100 100"))
-        val tester3 = Player(3, 10000, 0, 0, null, mutableListOf(), TestingPlayer("p p p 200 f"))
-        val tester4 = Player(4, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c p p p f"))
-
-        val players = listOf(tester1, tester2, tester3, tester4)
-
-        val board = Board(players)
-        board.playRound()
-
-        assertEquals(10600, tester2.wealth)
-    }
-
-    @Test
-    fun testUntilShowdown() {
-
-        val tester1 = Player(1, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c p p p f"))
-        val tester2 = Player(2, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c p p 100 100"))
-        val tester3 = Player(3, 10000, 0, 0, null, mutableListOf(), TestingPlayer("p p p 200 c"))
-        val tester4 = Player(4, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c p p p f"))
-
-        val players = listOf(tester1, tester2, tester3, tester4)
-
-        val board = Board(players)
-        board.playRound()
-
-        assertEquals(10000+300+400, max(tester2.wealth, tester3.wealth))
-    }
-
-    @Test
-    fun testUntilShowdownWithAllin() {
-
-        val tester1 = Player(1, 1000, 0, 0, null, mutableListOf(), TestingPlayer("1400"))
-        val tester2 = Player(2, 3000, 0, 0, null, mutableListOf(), TestingPlayer("c c"))
-        val tester3 = Player(3, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c c p c"))
-        val tester4 = Player(4, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c c 2000 p 1000"))
-
-        val players = listOf(tester1, tester2, tester3, tester4)
-
-        val board = Board(players)
-        board.playRound()
-
-        assertEquals(24000, tester1.wealth + tester2.wealth + tester3.wealth + tester4.wealth)
-    }
+//    @Test
+//    fun testOnlyChecking() {
+//
+//        val tester1 = Player(1, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c p p p f"))
+//        val tester2 = Player(2, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c p p 100 100"))
+//        val tester3 = Player(3, 10000, 0, 0, null, mutableListOf(), TestingPlayer("p p p 200 f"))
+//        val tester4 = Player(4, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c p p p f"))
+//
+//        val players = listOf(tester1, tester2, tester3, tester4)
+//
+//        val board = Board(players)
+//        board.playRound()
+//
+//        assertEquals(10600, tester2.wealth)
+//    }
+//
+//    @Test
+//    fun testUntilShowdown() {
+//
+//        val tester1 = Player(1, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c p p p f"))
+//        val tester2 = Player(2, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c p p 100 100"))
+//        val tester3 = Player(3, 10000, 0, 0, null, mutableListOf(), TestingPlayer("p p p 200 c"))
+//        val tester4 = Player(4, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c p p p f"))
+//
+//        val players = listOf(tester1, tester2, tester3, tester4)
+//
+//        val board = Board(players)
+//        board.playRound()
+//
+//        assertEquals(10000+300+400, max(tester2.wealth, tester3.wealth))
+//    }
+//
+//    @Test
+//    fun testUntilShowdownWithAllin() {
+//
+//        val tester1 = Player(1, 1000, 0, 0, null, mutableListOf(), TestingPlayer("1400"))
+//        val tester2 = Player(2, 3000, 0, 0, null, mutableListOf(), TestingPlayer("c c"))
+//        val tester3 = Player(3, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c c p c"))
+//        val tester4 = Player(4, 10000, 0, 0, null, mutableListOf(), TestingPlayer("c c 2000 p 1000"))
+//
+//        val players = listOf(tester1, tester2, tester3, tester4)
+//
+//        val board = Board(players)
+//        board.playRound()
+//
+//        assertEquals(24000, tester1.wealth + tester2.wealth + tester3.wealth + tester4.wealth)
+//    }
 }

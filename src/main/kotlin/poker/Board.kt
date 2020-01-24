@@ -16,27 +16,36 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
     var currentPlayer = nextPlayer(bigBlind)
     var isFinished = false
     var checks = players.size
+    var roundIsFinishedButNeedsShowdown = false
 
     override fun toString() = "Community cards: $communityCards; currentBet: $currentBet"
+
+    fun playGame() {
+        while((players.filter { it.wealth > 0 }).size > 1) {
+            playRound()
+        }
+    }
 
     fun playRound() {
         initializeRound()
 
         while (!isFinished) {
-            val player = copyPlayer(currentPlayer, true)
-            val board = copyBoard()
+            if (roundIsFinishedButNeedsShowdown) {
+                checkTransition()
+            } else {
+                val player = copyPlayer(currentPlayer, true)
+                val board = copyBoard()
 
-            println("Player to play: $player")
-            println("Board: $board")
+                println("Player to move: ${player.id} (wealth: ${player.wealth}; betted this round: ${player.betThisRound}; betted this hand: ${player.betTotal}")
 
+                val move = try {
+                    player.move(board)
+                } catch(_: Exception) {
+                    Fold(currentPlayer)
+                }
 
-            val move = try {
-                player.move(board)
-            } catch(_: Exception) {
-                Fold(currentPlayer)
+                handlePlayerInput(move)
             }
-
-            handlePlayerInput(move)
         }
     }
 
@@ -60,6 +69,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
 
     private fun smallBlind(): PlayerAction {
         val amount = min(minBet / 2, smallBlind.wealth)
+        println("Small blind of $amount by ${smallBlind.id}")
         smallBlind.wealth -= amount
         smallBlind.betThisRound += amount
         currentBet = amount
@@ -68,6 +78,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
 
     private fun bigBlind(): PlayerAction {
         val amount = min(minBet, smallBlind.wealth)
+        println("Big blind of $amount by ${bigBlind.id}")
         bigBlind.wealth -= amount
         bigBlind.betThisRound += amount
         currentBet = amount
@@ -77,14 +88,17 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
     private fun check(): PlayerAction {
         checks--
         return if (currentPlayer.betThisRound == currentBet) {
+            println("Check by ${currentPlayer.id}")
             Check(currentPlayer)
         } else {
+            println("Fold by ${currentPlayer.id}")
             Fold(currentPlayer)
         }
     }
 
     private fun fold(): PlayerAction {
         checks--
+        println("Fold by ${currentPlayer.id}")
         return Fold(currentPlayer)
     }
 
@@ -92,10 +106,12 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         checks--
         val amount = min(currentPlayer.wealth, currentBet - currentPlayer.betThisRound)
         return if (amount == 0) {
+            println("Check by ${currentPlayer.id}")
             Check(currentPlayer)
         } else {
             currentPlayer.wealth -= amount
             currentPlayer.betThisRound += amount
+            println("Call of $amount by ${currentPlayer.id}")
             Call(currentPlayer, amount)
         }
     }
@@ -104,10 +120,12 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         call()
         val actualAmount = min(currentPlayer.wealth, amount)
         if (actualAmount == currentPlayer.wealth) {
+            println("All in of $actualAmount by ${currentPlayer.id}")
             return allIn()
         }
 
         if (actualAmount < minBet) {
+            println("Fold by ${currentPlayer.id}")
             return Fold(currentPlayer)
         }
 
@@ -116,6 +134,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         currentBet += actualAmount
 
         checks = players.count { it.isActive && it.wealth > 0 } - 1
+        println("Raise of $actualAmount by ${currentPlayer.id}")
         return Raise(currentPlayer, actualAmount)
     }
 
@@ -131,6 +150,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         currentBet += amount
 
         checks = players.count { it.isActive && it.wealth > 0 }
+        println("All in of $amount by ${currentPlayer.id}")
         return AllIn(currentPlayer, amount)
     }
 
@@ -139,7 +159,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         if (activePlayers.size == 1) {
             isFinished = true
             activePlayers[0].wealth += players.sumBy { it.betThisRound + it.betTotal }
-        } else if (checks == 0) {
+        } else if (checks == 0 || roundIsFinishedButNeedsShowdown) {
             goToNextPhase()
         }
     }
@@ -215,6 +235,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
 
     private fun initializeRound() {
         actions.clear()
+        roundIsFinishedButNeedsShowdown = false
 
         dealer = nextPlayer(dealer)
         smallBlind = nextPlayer(dealer)
@@ -240,6 +261,11 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
     }
 
     private fun nextPlayer(player: Player): Player {
+        if (players.count { it.lastAction == Fold::class || (it.wealth == 0 && it.betThisRound + it.betTotal > 0) } == players.size  -1) {
+            roundIsFinishedButNeedsShowdown = true
+            return player
+        }
+
         val currentIndex = players.indexOf(player)
         for (i in players.indices) {
             val index = (i + currentIndex + 1) % players.size
@@ -248,7 +274,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
             }
         }
 
-        throw Exception("Should not be reachable")
+        throw Exception("Should not be reached")
     }
 
     private fun copyBoard(): Board {
