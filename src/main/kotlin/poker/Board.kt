@@ -198,7 +198,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
                 communityCards.add(flop.first)
                 communityCards.add(flop.second)
                 communityCards.add(flop.third)
-                println("Flop: ${flop.first}, ${flop.second}, ${flop.third}")
+                println("Flop")
             }
         }
     }
