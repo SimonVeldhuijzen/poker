@@ -5,7 +5,7 @@ import poker.*
 /**
  * Created by daan.tebokkel on 1/24/20
  */
-class BarryDePokerTovenaar: AIPlayer {
+class BarryDePokerTovenaar(override var name: String = "Barry") : AIPlayer {
 
     override fun move(state: Board, player: Player): PlayerAction {
         var action: String = ""
@@ -21,7 +21,7 @@ class BarryDePokerTovenaar: AIPlayer {
         } else if (action == "allin"){
             return AllIn(player, 10000000)
         } else if (action == "call")  {
-            return Call(player, 10)
+            return Call(player)
         } else if (action == "raise")  {
             return Raise(player, state.currentBet * 2)
         } else if (action == "fold")  {
