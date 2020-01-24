@@ -127,7 +127,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
             println("Check by ${currentPlayer.name}")
             return Check(currentPlayer)
         } else {
-            return fold()
+            error("wtf")
         }
     }
 
@@ -162,7 +162,7 @@ class Board(val players: List<Player>, val minBet: Int = 100) {
         if (currentPlayer.wealth <= amount) {
             return allIn()
         } else if (amount < minBet) {
-            return fold()
+            error("wtf")
         } else {
             currentPlayer.wealth -= amount
             currentPlayer.betThisRound += amount
