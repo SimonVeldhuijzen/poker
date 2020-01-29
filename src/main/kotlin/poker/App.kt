@@ -11,7 +11,7 @@ fun main(args: Array<String>) {
             alsucfnhaiegsdruifjklgjdkljhjhgfdsdhjkjhgfdryuiyrwqyuikdsjkdmnbvcxvbnmfdgjkjretyutrewhjmnxvbnmnbcdfghjkjgweyuiutrewrj(),
             Cheetos(acceptableRisk = 0.5f),
             BarryDePokerTovenaar(),
-            SirRaiseALot("SirRaiseALot", 1),
+            SirRaiseALot("SirRaiseALot", 1.0),
             PokermonMaster()
     ).mapIndexed { i, ai ->
         Player(i, ai.name, 10000, 0, 0, null, mutableListOf(), ai)

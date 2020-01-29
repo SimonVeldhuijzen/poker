@@ -157,10 +157,6 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
             currentPlayer.betThisRound += toCall
             println("Call of $toCall by ${currentPlayer.name}")
 
-            if (!isValid()) {
-
-            }
-
             return Call(currentPlayer)
         }
     }
@@ -176,10 +172,6 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
             currentPlayer.wealth -= amount
             currentPlayer.betThisRound += amount
             currentBet += amount
-
-            if (!isValid()) {
-
-            }
             println("Raise of $amount by ${currentPlayer.name}")
             return Raise(currentPlayer, amount)
         }
@@ -207,22 +199,8 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
     }
 
     private fun isEndOfBettingRound(): Boolean {
-        val maxBet = players.maxBy { it.betThisRound + it.betTotal }!!
-        val maxBett = maxBet.betThisRound + maxBet.betTotal
-        if (activePlayers.size == 0) {
-            return true
-        } else if (activePlayers.all { it.lastAction == Check::class || it.lastAction == Call::class }) {
-
-//        } else if (activePlayers.all { it.betThisRound + it.betTotal == maxBett && it.lastAction != BigBlind::class && it.lastAction != SmallBlind::class }) {
-            return true
-        } else {
-            val raisers = activePlayers.filter { it.lastAction == Raise::class }
-            if (raisers.size == 1) {
-                return raisers[0] == currentPlayer && (raisers[0].wealth > 0 && raisers[0].betThisRound < currentBet)
-            } else {
-                return false
-            }
-        }
+        val maxBet = players.map { it.betThisRound }.max()!!
+        return activePlayers.all { it.betThisRound == maxBet || it.wealth == 0}
     }
 
     private fun isEndOfRoundWithoutShowdown(): Boolean {
@@ -306,7 +284,7 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
 
         val highestBet = playersInShowDown.maxBy { it.betTotal }!!
         if (playersInShowDown.any { it.betTotal != highestBet.betTotal && it.wealth > 0 }) {
-//            error("not calling wtf")
+            error("not calling wtf")
         }
 
         var change = 0
@@ -331,9 +309,6 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
 
         if (players.any { it.betThisRound > 0 }) {
             error("Unreachable")
-        }
-        if (change > 5000) {
-//            while (!readLine()!!.contains("n"));
         }
         actions.add(Showdown())
         isFinished = true
@@ -368,10 +343,6 @@ class Board(val players: MutableList<Player>, val minBet: Int = 100) {
         }
 
         dealer = nextPlayer(dealer)
-
-        if (!isValid()) {
-
-        }
 
         currentPlayer = nextPlayer(dealer)
         handlePlayerInput(SmallBlind(currentPlayer, minBet / 2))
